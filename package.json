@@ -1,0 +1,60 @@
+{
+  "name": "@atomic-reactor/reactium-native-sdk-core",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Atomic-Reactor/reactium-native-sdk-core.git"
+  },
+  "dependencies": {
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.0",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-proposal-export-default-from": "^7.10.4",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-react": "^7.10.4",
+    "action-sequence": "^1.1.1",
+    "babel-jest": "^26.2.2",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "chai": "^4.2.0",
+    "classnames": "^2.2.6",
+    "dayjs": "^1.10.4",
+    "jest": "^26.2.2",
+    "jest-cli": "^26.2.2",
+    "memory-cache": "^0.2.0",
+    "object-path": "^0.11.5",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "shallow-equals": "^1.0.0",
+    "socket.io-client": "^3.1.3",
+    "underscore": "^1.9.1",
+    "uuid": "^3.3.3"
+  },
+  "peerDependencies": {
+    "action-sequence": "*",
+    "classnames": "*",
+    "dayjs": "*",
+    "memory-cache": "*",
+    "object-path": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-native-mmkv": "*",
+    "shallow-equals": "*",
+    "socket.io-client": "*",
+    "underscore": "*",
+    "uuid": "*"
+  },
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "test": "jest",
+    "pretest": "npm run build",
+    "prepublish": "rm -rf lib && npm run build"
+  },
+  "files": [
+    "lib"
+  ]
+}
