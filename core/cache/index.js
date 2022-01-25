@@ -5,33 +5,32 @@
  * @apiGroup Reactium.Cache
  * @apiDescription Cache allows you to easily store application data in memory.
  */
-import { MMKV } from 'react-native-mmkv';
-import memory from 'memory-cache';
-import op from 'object-path';
+
 import _ from 'underscore';
 import uuid from 'uuid/v4';
+import op from 'object-path';
+import memory from 'memory-cache';
 
-const denormalizeKey = keyString => {
+const denormalizeKey = (keyString) => {
     return Array.isArray(keyString) ? keyString : keyString.split('.');
 };
 
-const normalizeKey = key => {
+const normalizeKey = (key) => {
     return Array.isArray(key) ? key.join('.') : key;
 };
 
-const getKeyRoot = key => {
+const getKeyRoot = (key) => {
     const k = denormalizeKey(key)[0];
     return k;
 };
 
-const getValue = key => {
+const getValue = (key) => {
     const v = memory.get(getKeyRoot(key));
     return v;
 };
 
 class Cache {
     constructor() {
-        this._store = null;
         this._loaded = false;
         this._subscribers = {};
         this._subscribedPaths = {};
@@ -51,12 +50,6 @@ class Cache {
 
     get size() {
         return memory.size;
-    }
-
-    get store() {
-        const s = this._store || new MMKV();
-        this._store = s;
-        return s;
     }
 
     get memsize() {
@@ -120,7 +113,7 @@ class Cache {
         const expireCallback = () => {
             const subscribers = this.keySubscribers(key);
             if (timeoutCallback) timeoutCallback();
-            subscribers.forEach(cb => {
+            subscribers.forEach((cb) => {
                 cb({ op: 'expire', key });
             });
         };
@@ -135,9 +128,7 @@ class Cache {
             memory.put(key, value, ...params);
         }
 
-        this.store.set('store', JSON.stringify(this.get()));
-
-        subscribers.forEach(cb => {
+        subscribers.forEach((cb) => {
             cb({ op: 'set', key, value });
         });
     }
@@ -185,9 +176,7 @@ class Cache {
             }
         }
 
-        this.store.set('store', JSON.stringify(this.get()));
-
-        subscribers.forEach(cb => {
+        subscribers.forEach((cb) => {
             cb({ op: 'del', key });
         });
     }
@@ -196,47 +185,19 @@ class Cache {
         memory.clear();
         const subscribers = Object.values(this._subscribers);
 
-        this.store.set('store', JSON.stringify(this.get()));
-
-        subscribers.forEach(cb => {
+        subscribers.forEach((cb) => {
             cb({ op: 'clear' });
         });
     }
 
-    merge(values, options) {
-        const dayjs = require('dayjs');
-        options = options || { skipDuplicates: false };
-
-        values = Object.keys(values).reduce((obj, key) => {
-            const value = values[key];
-
-            const expire = op.get(value, 'expire');
-
-            if (typeof expire === 'number') {
-                value.expire = dayjs(Date.now())
-                    .add(expire, 'milliseconds')
-                    .valueOf();
-            }
-
-            obj[key] = value;
-
-            Object.values(subscribers).forEach(cb => {
-                cb({ op: 'merge', obj });
-            });
-
-            return obj;
-        }, {});
-
-        return memory.importJson(JSON.stringify(values));
-    }
-
-    load() {
-        if (this._loaded !== false) return;
-
-        let store = this.store.getString('store') || '{}';
-        store = typeof store === 'string' ? JSON.parse(store) : store;
-        Object.entries(store).forEach(([key, value]) => this.set(key, value));
-        this._loaded = true;
+    load(store) {
+        if (store) {
+            store = typeof store === 'string' ? JSON.parse(store) : store;
+            Object.entries(store).forEach(([key, value]) =>
+                this.set(key, value),
+            );
+        }
+        return this;
     }
 }
 

@@ -5,15 +5,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _reactNativeMmkv = require("react-native-mmkv");
-
-var _memoryCache = _interopRequireDefault(require("memory-cache"));
-
-var _objectPath = _interopRequireDefault(require("object-path"));
-
 var _underscore = _interopRequireDefault(require("underscore"));
 
 var _v = _interopRequireDefault(require("uuid/v4"));
+
+var _objectPath = _interopRequireDefault(require("object-path"));
+
+var _memoryCache = _interopRequireDefault(require("memory-cache"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -45,7 +43,6 @@ const getValue = key => {
 
 class Cache {
   constructor() {
-    this._store = null;
     this._loaded = false;
     this._subscribers = {};
     this._subscribedPaths = {};
@@ -65,12 +62,6 @@ class Cache {
 
   get size() {
     return _memoryCache.default.size;
-  }
-
-  get store() {
-    const s = this._store || new _reactNativeMmkv.MMKV();
-    this._store = s;
-    return s;
   }
 
   get memsize() {
@@ -153,7 +144,6 @@ class Cache {
       _memoryCache.default.put(key, value, ...params);
     }
 
-    this.store.set('store', JSON.stringify(this.get()));
     subscribers.forEach(cb => {
       cb({
         op: 'set',
@@ -209,7 +199,6 @@ class Cache {
       }
     }
 
-    this.store.set('store', JSON.stringify(this.get()));
     subscribers.forEach(cb => {
       cb({
         op: 'del',
@@ -222,7 +211,6 @@ class Cache {
     _memoryCache.default.clear();
 
     const subscribers = Object.values(this._subscribers);
-    this.store.set('store', JSON.stringify(this.get()));
     subscribers.forEach(cb => {
       cb({
         op: 'clear'
@@ -230,39 +218,13 @@ class Cache {
     });
   }
 
-  merge(values, options) {
-    const dayjs = require('dayjs');
+  load(store) {
+    if (store) {
+      store = typeof store === 'string' ? JSON.parse(store) : store;
+      Object.entries(store).forEach(([key, value]) => this.set(key, value));
+    }
 
-    options = options || {
-      skipDuplicates: false
-    };
-    values = Object.keys(values).reduce((obj, key) => {
-      const value = values[key];
-
-      const expire = _objectPath.default.get(value, 'expire');
-
-      if (typeof expire === 'number') {
-        value.expire = dayjs(Date.now()).add(expire, 'milliseconds').valueOf();
-      }
-
-      obj[key] = value;
-      Object.values(subscribers).forEach(cb => {
-        cb({
-          op: 'merge',
-          obj
-        });
-      });
-      return obj;
-    }, {});
-    return _memoryCache.default.importJson(JSON.stringify(values));
-  }
-
-  load() {
-    if (this._loaded !== false) return;
-    let store = this.store.getString('store') || '{}';
-    store = typeof store === 'string' ? JSON.parse(store) : store;
-    Object.entries(store).forEach(([key, value]) => this.set(key, value));
-    this._loaded = true;
+    return this;
   }
 
 } // Statics
