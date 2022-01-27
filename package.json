@@ -58,7 +58,7 @@
     "build": "babel core --out-dir dist",
     "test": "jest",
     "pretest": "npm run build",
-    "prepare": "node ./prepublish.js && npm run build"
+    "prepublishOnly": "node ./prepublish.js && npm run build"
   },
   "files": [
     "dist",
