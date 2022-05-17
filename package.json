@@ -1,6 +1,6 @@
 {
   "name": "@atomic-reactor/reactium-native-sdk-core",
-  "version": "1.0.21",
+  "version": "1.0.24",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
@@ -32,8 +32,8 @@
     "jest-cli": "^26.2.2",
     "memory-cache": "^0.2.0",
     "object-path": "^0.11.8",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "react-native": "^0.67.1",
     "react-native-crypto-js": "^1.0.0",
     "semver": "^7.3.5",
@@ -48,8 +48,8 @@
     "dayjs": "*",
     "memory-cache": "*",
     "object-path": "*",
-    "react": "*",
-    "react-dom": "*",
+    "react": "^17.*",
+    "react-dom": "^17.*",
     "shallow-equals": "*",
     "underscore": "*",
     "uuid": "*"
